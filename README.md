@@ -1,42 +1,21 @@
-#!/bin/bash
-
-# --- BASH STOPWATCH ---
-# Description: A simple, precise stopwatch for the terminal.
-# Usage: ./stopwatch.sh
-
-# Function to handle exit (Ctrl+C)
-cleanup() {
-    echo -e "\n\nFinal Time: $time_display"
-    echo "Stopwatch closed."
-    exit 0
-}
-
-# Trap SIGINT (Ctrl+C)
-trap cleanup SIGINT
-
-clear
-start_time=$(date +%s)
-
-echo "============================"
-echo "    BASH STOPWATCH ACTIVE   "
-echo "============================"
-echo " Press [CTRL+C] to stop "
-echo "----------------------------"
-
-while true; do
-    current_time=$(date +%s)
-    elapsed=$((current_time - start_time))
-
-    # Calculate hours, minutes, and seconds
-    hours=$((elapsed / 3600))
-    mins=$(( (elapsed % 3600) / 60 ))
-    secs=$((elapsed % 60))
-
-    # Format the time string
-    time_display=$(printf "%02dh %02dm %02ds" $hours $mins $secs)
-
-    # Use \r to overwrite the same line in the terminal
-    printf "\r  Running: %s" "$time_display"
-    
-    sleep 1
-done
+⏱️ Terminal Stopwatch Logic
+This project implements a high-precision stopwatch using Bash and Unix System Time. Instead of relying on a simple counter (which can drift due to CPU lag), this script calculates the delta between system timestamps.
+🧠 Logical Workflow
+The script operates on a four-step loop to ensure accuracy and terminal cleanliness:Epoch Initialization: Upon execution, the script captures the current Unix Epoch (the total number of seconds elapsed since January 1, 1970) and stores it as the start_point.
+Difference Calculation: Every one-second cycle, the script polls the system clock again and subtracts the start_point from the current_time.
+Unit Conversion: The resulting raw integer (seconds) is processed through modular arithmetic to derive human-readable units:
+Hours: Total seconds divided by 3600.
+Minutes: Remainder of hours divided by 60.
+Seconds: Remainder of minutes.
+Buffer Overwriting: Using the Carriage Return (\r) escape character, the script moves the terminal cursor back to the start of the line rather than printing a new line. This creates a "live" UI effect in the console.
+🛠️ Requirements & Execution
+Prerequisites Environment: Any POSIX-compliant shell (Bash, Zsh, Dash).
+Permissions: The file must have execute permissions (755) to run.
+User Interaction Start: Triggered by executing the script file.
+Pause/Stop: Handled via the SIGINT signal (typically Ctrl+C).
+Cleanup: The script uses a trap function to catch the exit signal and print the final elapsed time before returning control to the shell prompt.
+Why document it this way?
+This approach is excellent for GitHub because:
+Educational: It explains how it works (Unix Epochs vs. Counters).
+Professional: It treats the script as a piece of software architecture.
+Clean: It avoids cluttering the main page if you prefer users to look at the stopwatch.sh file directly for the source.
